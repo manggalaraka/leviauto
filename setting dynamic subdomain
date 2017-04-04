@@ -1,0 +1,24 @@
+RewriteEngine On  
+  
+RewriteBase /  
+ 
+# if REQUEST_URI contains the word "user" and the  
+# SERVER_NAME doesn't contain a "." re-direct to the root  
+# The reason this is done is because of how the last two rules  
+# below are triggered  
+RewriteCond %{REQUEST_URI} (user) [NC]  
+RewriteCond %{SERVER_NAME} !\.  
+RewriteRule (.*) / [L,R=301]  
+ 
+# Allow files and directories to pass  
+RewriteCond %{SCRIPT_FILENAME} !-d  
+RewriteCond %{SCRIPT_FILENAME} !-f  
+ 
+# Codeigniter rule for stripping index.php  
+RewriteCond $1 !^(index\.php|images|robots\.txt)  
+RewriteRule ^(.*)$ /index.php/$1 [C]  
+ 
+# Force wild-card subdomains to redirect.  
+# E.g. http://me.domain/foo/bar/123 as http://domain/user/me/index.php/foo/bar/123/bar/123/  
+RewriteCond %{HTTP_HOST} ^([a-z0-9-]+).domain [NC]  
+RewriteRule (.*) /index.php/user/%1/$1/ [L]  
